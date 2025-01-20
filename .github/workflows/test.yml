@@ -27,21 +27,11 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "${GITHUB_CONTEXT}"
-
-      - name: Read .nvmrc
-        run: echo "::set-output name=NVMRC::$(cat .nvmrc)"
-        id: nvm
-
-      - name: Setup Node
-        uses: actions/setup-node@v3
+      - uses: peaceiris/workflows/setup-node@v0.20.1
         with:
-          node-version: '${{ steps.nvm.outputs.NVMRC }}'
+          node-version-file: ".nvmrc"
 
       - name: Dump version
         run: |
@@ -71,12 +61,12 @@ jobs:
       - run: npm test
 
       - name: Upload test coverage as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-${{ matrix.os }}
           path: coverage
 
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
 
       - name: Run ncc
         run: npm run build
@@ -89,7 +79,7 @@ jobs:
 
       - name: Setup mdBook
         if: ${{ github.ref == 'refs/heads/main' }}
-        uses: peaceiris/actions-mdbook@v1.1.14
+        uses: peaceiris/actions-mdbook@v1.2.0
         with:
           mdbook-version: '0.4.5'
 
